@@ -82,13 +82,16 @@ namespace StackExchange.Profiling.RavenDb
 
             var formattedRequest = JsonFormatter.FormatRequest(request);
 
-            profiler.Head.AddCustomTiming("raven", new CustomTiming(profiler, BuildCommandString(formattedRequest))
+            if (profiler != null && profiler.Head != null)
             {
-                Id = Guid.NewGuid(),
-                DurationMilliseconds = (decimal)formattedRequest.DurationMilliseconds,
-                FirstFetchDurationMilliseconds = (decimal)formattedRequest.DurationMilliseconds,
-                ExecuteType = formattedRequest.Status.ToString()
-            });
+                profiler.Head.AddCustomTiming("raven", new CustomTiming(profiler, BuildCommandString(formattedRequest))
+                {
+                    Id = Guid.NewGuid(),
+                    DurationMilliseconds = (decimal)formattedRequest.DurationMilliseconds,
+                    FirstFetchDurationMilliseconds = (decimal)formattedRequest.DurationMilliseconds,
+                    ExecuteType = formattedRequest.Status.ToString()
+                });
+            }
         }
 
         private static string BuildCommandString(RequestResultArgs request)
